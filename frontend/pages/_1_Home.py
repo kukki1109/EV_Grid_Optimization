@@ -19,4 +19,3 @@ if uploaded_file is not None:
     st.success("✅ Dataset uploaded successfully!")
     st.dataframe(df.head())
     st.write(f"Rows: {df.shape[0]}, Columns: {df.shape[1]}")
-

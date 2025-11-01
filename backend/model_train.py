@@ -54,9 +54,9 @@ def train_ev_model(csv_path="data/ev_data.csv"):
     print(f"Model trained successfully! RMSE: {rmse:.3f}, R²: {r2:.3f}")
     return rmse, r2
 
-
 def predict_energy(hour, weekday, charging_time, battery_capacity=50, charging_type_num=0):
     model = joblib.load(MODEL_PATH)
     X = np.array([[hour, weekday, charging_time, battery_capacity, charging_type_num]])
     prediction = model.predict(X)[0]
     return prediction
+

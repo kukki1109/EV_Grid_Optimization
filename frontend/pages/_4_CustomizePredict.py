@@ -1,3 +1,10 @@
+from pymongo import MongoClient
+
+# Connect to local MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client["ev_database"]          # Database name
+collection = db["predictions"]      # Collection name
+
 import sys
 import os
 import streamlit as st
@@ -46,19 +53,29 @@ charging_type_num = 1 if charging_type == "Fast Charger" else 0
 # -----------------------------
 if st.button("Predict Charging Power ⚡"):
     try:
-        # Load trained model
+        # 1️⃣ Load trained model
         model = joblib.load("models/model.pkl")
 
-        # Prepare input array
-        # NOTE: Ensure your trained model has the same features in same order
+        # 2️⃣ Prepare input array
         X_input = np.array([[hour, weekday, charging_time, battery_capacity, charging_type_num]])
 
-        # Predict
+        # 3️⃣ Predict
         prediction = model.predict(X_input)[0]
-
         st.success(f"Predicted Charging Power: **{prediction:.2f} kW**")
+
+        # 4️⃣ Save prediction to MongoDB
+        log = {
+            "hour": hour,
+            "weekday": weekday,
+            "charging_time": charging_time,
+            "battery_capacity": battery_capacity,
+            "charging_type": charging_type,
+            "predicted_power": prediction
+        }
+        collection.insert_one(log)
 
     except FileNotFoundError:
         st.error("❌ Model file not found! Please train the model first.")
     except Exception as e:
         st.error(f"❌ Error: {e}")
+

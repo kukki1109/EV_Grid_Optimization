@@ -164,3 +164,4 @@ if st.button("📊 Compare Predictions"):
         height=450
     )
     st.plotly_chart(fig2, use_container_width=True)
+
